@@ -2,7 +2,181 @@
     <section class="article">
         <div class="container">
             <div class="article__header">
-                <h1 class="article__title">RU businessApi</h1>
+                <h1 class="article__title">Документация по API Bazonix</h1>
+            </div>
+            <div class="article__content">
+                <h2 class="article__subtitle">Введение</h2>
+                <p class="article__text">Для работы с API Bazonix требуется указывать параметр <b>key</b> (API key), который выдается после регистрации в Партнерской программе.</p>
+                <p class="article__text">Базовый URL API: <code>https://bazonix.com/v1/api</code></p>
+                <p class="article__text">Все ответы приходят в формате <b>JSON</b>.</p>
+
+                <h2 class="article__subtitle">Методы GET</h2>
+
+                <h3 class="article__subheading">/currencies — Получение списка поддерживаемых валют</h3>
+                <p class="article__text">Возвращает перечень всех монет, доступных для операций на платформе.</p>
+                <pre><code>GET
+https://bazonix.com/v1/api/currencies?key=8h238xk4g7x002b7s</code></pre>
+                <p class="article__text"><b>Параметры:</b></p>
+                <ul class="article__list">
+                    <li class="article__list-item">key (string): Ваш API ключ</li>
+                </ul>
+                <p class="article__text"><b>Пример ответа (200):</b></p>
+                <pre><code>{
+  "XMR": {
+    "coinName": "Monero",
+    "minamount": 9.95,
+    "maxamount": 29850,
+    "tagname": "",
+    "network": "Monero",
+    "available": true
+  },
+  "ZEC": {
+    "coinName": "Zcash",
+    "minamount": 99.5,
+    "maxamount": 149250,
+    "tagname": "",
+    "network": "Zcash",
+    "available": true
+  },
+  "XRP": {
+    "coinName": "XRP",
+    "minamount": 5888.55925,
+    "maxamount": 8200256.44,
+    "tagname": "TAG",
+    "network": "Ripple",
+    "available": true
+  },
+  "XLM": {
+    "coinName": "Stellar",
+    "minamount": 33197.44865,
+    "maxamount": 40072953.375,
+    "tagname": "MEMO",
+    "network": "Stellar Lumens",
+    "available": true
+  },
+  ...
+}</code></pre>
+                <p class="article__text"><b>Примечание:</b> если поле <code>tagname</code> не пустое, то для этой валюты обязательно указывать тег при переводе.</p>
+
+                <h3 class="article__subheading">/pairs — Получение списка валютных пар</h3>
+                <p class="article__text">Метод возвращает все доступные для обмена пары валют.</p>
+                <pre><code>GET
+https://bazonix.com/v1/api/pairs?key=8h238xk4g7x002b7s</code></pre>
+                <p class="article__text"><b>Параметры:</b></p>
+                <ul class="article__list">
+                    <li class="article__list-item">key (string): Ваш API ключ</li>
+                </ul>
+                <p class="article__text"><b>Пример ответа (200):</b></p>
+                <pre><code>{
+  "ZEC": ["BTC", "USDC", "ETH", "USDTTRC20"],
+  "DASH": ["BTC", "USDC", "ETH", "USDTTRC20"],
+  "DOT": ["BTC", "USDC", "ETH", "USDTTRC20"],
+  ...
+}</code></pre>
+
+                <h3 class="article__subheading">/rate — Получение актуального курса обмена</h3>
+                <p class="article__text">Позволяет узнать текущий курс обмена между двумя валютами. Комиссия майнера не включена в курс и взимается отдельно.</p>
+                <pre><code>GET
+https://bazonix.com/v1/api/rate?key=8h238xk4g7x002b7s&from=XMR&to=BTC&amount=387.9</code></pre>
+                <p class="article__text"><b>Параметры:</b></p>
+                <ul class="article__list">
+                    <li class="article__list-item">key (string): Ваш API ключ</li>
+                    <li class="article__list-item">from (string): Исходная валюта, например ZEC</li>
+                    <li class="article__list-item">to (string): Валюта назначения, например BTC</li>
+                    <li class="article__list-item">amount (float): Сумма для обмена, например 1000</li>
+                </ul>
+                <p class="article__text"><b>Пример ответа (200):</b></p>
+                <pre><code>{
+  "minamount": 101.291,
+  "maxamount": 141748.695,
+  "rate": 1.0440850508752765,
+  "withdrawalFee": 0.002 BTC,
+  "result": true
+}</code></pre>
+                <p class="article__text"><b>* withdrawalFee</b> — примерная комиссия за вывод, может меняться.</p>
+
+                <h3 class="article__subheading">/validate-address — Проверка корректности адреса</h3>
+                <p class="article__text">Этот метод позволяет проверить, является ли указанный адрес действительным для выбранной криптовалюты.</p>
+                <pre><code>GET
+https://bazonix.com/v1/api/validate-address?key=8h238xk4g7x002b7s&currency=USDTERC20&address=0x5867c19db1c1d05ba1034a9162c4c78ca8830f3ccb0eeedd977c91385dd30169</code></pre>
+                <p class="article__text"><b>Параметры:</b></p>
+                <ul class="article__list">
+                    <li class="article__list-item">key (string): Ваш API ключ, например 8h238xk4g7x002b7s</li>
+                    <li class="article__list-item">currency (string): Валюта, например USDTERC20</li>
+                    <li class="article__list-item">address (string): Проверяемый адрес, например 0x5867c19db1c1d05ba1034a9162c4c78ca8830f3ccb0eeedd977c91385dd30169</li>
+                </ul>
+                <p class="article__text"><b>Пример ответа (200):</b></p>
+                <pre><code>{
+    "result": true
+}</code></pre>
+
+                <h3 class="article__subheading">/exchange-create — Создание новой заявки на обмен</h3>
+                <p class="article__text">Позволяет создать заявку на обмен между двумя валютами.</p>
+                <pre><code>GET
+https://bazonix.com/v1/api/exchange-create?key=8h238xk4g7x002b7s&from=XMR&to=ZEC&amount=26.4509&destinationAddress=33NWPY7z4vHzMnuyzRJg6hUvMXDw5Y7v9o&refundAddress=87mEgetMnPSMMKsAFRRf7UMKLSdzdke99Rk63PYZv5hYeUmx29gEd9PKbwiQ7ZsYv7AJMKZ3515E</code></pre>
+                <p class="article__text"><b>Параметры:</b></p>
+                <ul class="article__list">
+                    <li class="article__list-item">key (string): Ваш API ключ</li>
+                    <li class="article__list-item">destinationAddress (string): Адрес получателя</li>
+                    <li class="article__list-item">destinationTag (string, опционально): Тег получателя (если требуется)</li>
+                    <li class="article__list-item">refundAddress (string): Адрес возврата</li>
+                    <li class="article__list-item">refundTag (string, опционально): Тег возврата (если требуется)</li>
+                    <li class="article__list-item">from (string): Исходная валюта</li>
+                    <li class="article__list-item">to (string): Валюта назначения</li>
+                    <li class="article__list-item">amount (float): Сумма обмена</li>
+                </ul>
+                <p class="article__text"><b>Пример ответа (200):</b></p>
+                <pre><code>{
+    'id'                 : '43c393b8-1dc6-40e3-ad83-d721bf467ac1',
+    'from'               : 'XMR',
+    'to'                 : 'BTC',
+    'expectedAmountFrom' : '26.4509',
+    "expectedAmountTo"   : '0.24118351760777',
+    'depositAddress'     : '87mEgetMnPSMMKsAFRRf7UMKLSdzdke99Rk63PYZv5hYeUmx29gEd9PKbwiQ7ZsYv7AJMKZ3515E',
+    'depositTag'         : '',
+}</code></pre>
+
+                <h3 class="article__subheading">/exchange-status — Проверка статуса обмена</h3>
+                <p class="article__text">Позволяет узнать текущий статус заявки на обмен.</p>
+                <pre><code>GET
+https://bazonix.com/v1/api/exchange-status?key=8h238xk4g7x002b7s&id=43c393b8-1dc6-40e3-ad83-d721bf467ac1</code></pre>
+                <p class="article__text"><b>Параметры:</b></p>
+                <ul class="article__list">
+                    <li class="article__list-item">key (string): Ваш API ключ</li>
+                    <li class="article__list-item">id (string): Идентификатор заявки</li>
+                </ul>
+                <p class="article__text"><b>Пример ответа (200):</b></p>
+                <pre><code>{
+    'status'             : 'deposit_received',
+    'from'               : 'XMR',
+    'to'                 : 'BTC',
+    'depositAddress'     : '87mEgetMnPSMMKsAFRRf7UMKLSdzdke99Rk63PYZv5hYeUmx29gEd9PKbwiQ7ZsYv7AJMKZ3515EtJ6uxZvWmksLFtMi7qM',
+    'depositTag'         : '',
+    'depositTxId'        : '',
+    'destinationAddress' : '34xp4vRoCGJym3xR7yCVPFHoCNxv4Twseo',
+    'destinationTag'     : '',
+    'refundAddress'      : '87mEgetMnPSMMKsAFRRf7UMKLSdzdke99Rk63PYZv5hYeUmx29gEd9PKbwiQ7ZsYv7AJMKZ3515E',
+    'refundTag'          : '',
+    'expectedAmountFrom' : '25.2351',
+    'expectedAmountTo'   : '0.198351760777',
+    'amountFrom'         : '25.3419',
+    'date'               : '12.06.2024 00:13:22',
+    'txId'               : null,
+    'amountTo'           : null,
+    'result'             : true
+}</code></pre>
+                <p class="article__text"><b>Возможные статусы заявки:</b></p>
+                <ul class="article__list">
+                    <li class="article__list-item">waiting_deposit — ожидается поступление депозита</li>
+                    <li class="article__list-item">deposit_received — депозит получен</li>
+                    <li class="article__list-item">exchanging — обмен в процессе</li>
+                    <li class="article__list-item">sending — отправка средств</li>
+                    <li class="article__list-item">success — обмен завершён успешно</li>
+                    <li class="article__list-item">time_expired — время ожидания депозита истекло</li>
+                    <li class="article__list-item">failed — обмен завершился с ошибкой</li>
+                    <li class="article__list-item">sending_failed — ошибка при отправке средств</li>
+                    <li class="article__list-item">reverted — средства возвращены клиенту</li>
+                </ul>
             </div>
         </div>
     </section>

@@ -2,7 +2,181 @@
     <section class="article">
         <div class="container">
             <div class="article__header">
-                <h1 class="article__title">EN businessApi</h1>
+                <h1 class="article__title">Bazonix API Documentation</h1>
+            </div>
+            <div class="article__content">
+                <h2 class="article__subtitle">Introduction</h2>
+                <p class="article__text">To use the Bazonix API, you must specify the <b>key</b> parameter (API key), which is issued after registration in the Partner Program.</p>
+                <p class="article__text">Base API URL: <code>https://bazonix.com/v1/api</code></p>
+                <p class="article__text">All responses are returned in <b>JSON</b> format.</p>
+
+                <h2 class="article__subtitle">GET Methods</h2>
+
+                <h3 class="article__subheading">/currencies — Get Supported Currencies</h3>
+                <p class="article__text">Returns a list of all coins available for operations on the platform.</p>
+                <pre><code>GET
+https://bazonix.com/v1/api/currencies?key=8h238xk4g7x002b7s</code></pre>
+                <p class="article__text"><b>Parameters:</b></p>
+                <ul class="article__list">
+                    <li class="article__list-item">key (string): Your API key</li>
+                </ul>
+                <p class="article__text"><b>Example response (200):</b></p>
+                <pre><code>{
+  "XMR": {
+    "coinName": "Monero",
+    "minamount": 9.95,
+    "maxamount": 29850,
+    "tagname": "",
+    "network": "Monero",
+    "available": true
+  },
+  "ZEC": {
+    "coinName": "Zcash",
+    "minamount": 99.5,
+    "maxamount": 149250,
+    "tagname": "",
+    "network": "Zcash",
+    "available": true
+  },
+  "XRP": {
+    "coinName": "XRP",
+    "minamount": 5888.55925,
+    "maxamount": 8200256.44,
+    "tagname": "TAG",
+    "network": "Ripple",
+    "available": true
+  },
+  "XLM": {
+    "coinName": "Stellar",
+    "minamount": 33197.44865,
+    "maxamount": 40072953.375,
+    "tagname": "MEMO",
+    "network": "Stellar Lumens",
+    "available": true
+  },
+  ...
+}</code></pre>
+                <p class="article__text"><b>Note:</b> if the <code>tagname</code> field is not empty, a tag is required for this currency when transferring.</p>
+
+                <h3 class="article__subheading">/pairs — Get Currency Pairs</h3>
+                <p class="article__text">Returns all available currency pairs for exchange.</p>
+                <pre><code>GET
+https://bazonix.com/v1/api/pairs?key=8h238xk4g7x002b7s</code></pre>
+                <p class="article__text"><b>Parameters:</b></p>
+                <ul class="article__list">
+                    <li class="article__list-item">key (string): Your API key</li>
+                </ul>
+                <p class="article__text"><b>Example response (200):</b></p>
+                <pre><code>{
+  "ZEC": ["BTC", "USDC", "ETH", "USDTTRC20"],
+  "DASH": ["BTC", "USDC", "ETH", "USDTTRC20"],
+  "DOT": ["BTC", "USDC", "ETH", "USDTTRC20"],
+  ...
+}</code></pre>
+
+                <h3 class="article__subheading">/rate — Get Current Exchange Rate</h3>
+                <p class="article__text">Allows you to get the current exchange rate between two currencies. The miner fee is not included in the rate and is charged separately.</p>
+                <pre><code>GET
+https://bazonix.com/v1/api/rate?key=8h238xk4g7x002b7s&from=XMR&to=BTC&amount=387.9</code></pre>
+                <p class="article__text"><b>Parameters:</b></p>
+                <ul class="article__list">
+                    <li class="article__list-item">key (string): Your API key</li>
+                    <li class="article__list-item">from (string): Source currency, e.g. ZEC</li>
+                    <li class="article__list-item">to (string): Target currency, e.g. BTC</li>
+                    <li class="article__list-item">amount (float): Amount to exchange, e.g. 1000</li>
+                </ul>
+                <p class="article__text"><b>Example response (200):</b></p>
+                <pre><code>{
+  "minamount": 101.291,
+  "maxamount": 141748.695,
+  "rate": 1.0440850508752765,
+  "withdrawalFee": 0.002 BTC,
+  "result": true
+}</code></pre>
+                <p class="article__text"><b>* withdrawalFee</b> — approximate withdrawal fee, may vary.</p>
+
+                <h3 class="article__subheading">/validate-address — Address Validation</h3>
+                <p class="article__text">This method allows you to check if the specified address is valid for the selected cryptocurrency.</p>
+                <pre><code>GET
+https://bazonix.com/v1/api/validate-address?key=8h238xk4g7x002b7s&currency=USDTERC20&address=0x5867c19db1c1d05ba1034a9162c4c78ca8830f3ccb0eeedd977c91385dd30169</code></pre>
+                <p class="article__text"><b>Parameters:</b></p>
+                <ul class="article__list">
+                    <li class="article__list-item">key (string): Your API key, e.g. 8h238xk4g7x002b7s</li>
+                    <li class="article__list-item">currency (string): Currency, e.g. USDTERC20</li>
+                    <li class="article__list-item">address (string): Address to validate, e.g. 0x5867c19db1c1d05ba1034a9162c4c78ca8830f3ccb0eeedd977c91385dd30169</li>
+                </ul>
+                <p class="article__text"><b>Example response (200):</b></p>
+                <pre><code>{
+    "result": true
+}</code></pre>
+
+                <h3 class="article__subheading">/exchange-create — Create New Exchange Request</h3>
+                <p class="article__text">Allows you to create an exchange request between two currencies.</p>
+                <pre><code>GET
+https://bazonix.com/v1/api/exchange-create?key=8h238xk4g7x002b7s&from=XMR&to=ZEC&amount=26.4509&destinationAddress=33NWPY7z4vHzMnuyzRJg6hUvMXDw5Y7v9o&refundAddress=87mEgetMnPSMMKsAFRRf7UMKLSdzdke99Rk63PYZv5hYeUmx29gEd9PKbwiQ7ZsYv7AJMKZ3515E</code></pre>
+                <p class="article__text"><b>Parameters:</b></p>
+                <ul class="article__list">
+                    <li class="article__list-item">key (string): Your API key</li>
+                    <li class="article__list-item">destinationAddress (string): Recipient address</li>
+                    <li class="article__list-item">destinationTag (string, optional): Recipient tag (if required)</li>
+                    <li class="article__list-item">refundAddress (string): Refund address</li>
+                    <li class="article__list-item">refundTag (string, optional): Refund tag (if required)</li>
+                    <li class="article__list-item">from (string): Source currency</li>
+                    <li class="article__list-item">to (string): Target currency</li>
+                    <li class="article__list-item">amount (float): Exchange amount</li>
+                </ul>
+                <p class="article__text"><b>Example response (200):</b></p>
+                <pre><code>{
+    'id'                 : '43c393b8-1dc6-40e3-ad83-d721bf467ac1',
+    'from'               : 'XMR',
+    'to'                 : 'BTC',
+    'expectedAmountFrom' : '26.4509',
+    "expectedAmountTo"   : '0.24118351760777',
+    'depositAddress'     : '87mEgetMnPSMMKsAFRRf7UMKLSdzdke99Rk63PYZv5hYeUmx29gEd9PKbwiQ7ZsYv7AJMKZ3515E',
+    'depositTag'         : '',
+}</code></pre>
+
+                <h3 class="article__subheading">/exchange-status — Check Exchange Status</h3>
+                <p class="article__text">Allows you to get the current status of an exchange request.</p>
+                <pre><code>GET
+https://bazonix.com/v1/api/exchange-status?key=8h238xk4g7x002b7s&id=43c393b8-1dc6-40e3-ad83-d721bf467ac1</code></pre>
+                <p class="article__text"><b>Parameters:</b></p>
+                <ul class="article__list">
+                    <li class="article__list-item">key (string): Your API key</li>
+                    <li class="article__list-item">id (string): Request ID</li>
+                </ul>
+                <p class="article__text"><b>Example response (200):</b></p>
+                <pre><code>{
+    'status'             : 'deposit_received',
+    'from'               : 'XMR',
+    'to'                 : 'BTC',
+    'depositAddress'     : '87mEgetMnPSMMKsAFRRf7UMKLSdzdke99Rk63PYZv5hYeUmx29gEd9PKbwiQ7ZsYv7AJMKZ3515EtJ6uxZvWmksLFtMi7qM',
+    'depositTag'         : '',
+    'depositTxId'        : '',
+    'destinationAddress' : '34xp4vRoCGJym3xR7yCVPFHoCNxv4Twseo',
+    'destinationTag'     : '',
+    'refundAddress'      : '87mEgetMnPSMMKsAFRRf7UMKLSdzdke99Rk63PYZv5hYeUmx29gEd9PKbwiQ7ZsYv7AJMKZ3515E',
+    'refundTag'          : '',
+    'expectedAmountFrom' : '25.2351',
+    'expectedAmountTo'   : '0.198351760777',
+    'amountFrom'         : '25.3419',
+    'date'               : '12.06.2024 00:13:22',
+    'txId'               : null,
+    'amountTo'           : null,
+    'result'             : true
+}</code></pre>
+                <p class="article__text"><b>Possible request statuses:</b></p>
+                <ul class="article__list">
+                    <li class="article__list-item">waiting_deposit — waiting for deposit</li>
+                    <li class="article__list-item">deposit_received — deposit received</li>
+                    <li class="article__list-item">exchanging — exchanging</li>
+                    <li class="article__list-item">sending — sending funds</li>
+                    <li class="article__list-item">success — exchange completed successfully</li>
+                    <li class="article__list-item">time_expired — deposit waiting time expired</li>
+                    <li class="article__list-item">failed — exchange failed</li>
+                    <li class="article__list-item">sending_failed — sending failed</li>
+                    <li class="article__list-item">reverted — funds returned to client</li>
+                </ul>
             </div>
         </div>
     </section>
